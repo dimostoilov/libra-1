@@ -18,6 +18,7 @@ import static org.eclipse.libra.facet.OSGiBundleFacetUtils.JAVAX_SERVLET_JSP_EL_
 import static org.eclipse.libra.facet.OSGiBundleFacetUtils.JAVAX_SERVLET_JSP_PACKAGE;
 import static org.eclipse.libra.facet.OSGiBundleFacetUtils.JAVAX_SERVLET_JSP_TAGEXT_PACKAGE;
 import static org.eclipse.libra.facet.OSGiBundleFacetUtils.JAVAX_SERVLET_PACKAGE;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.JAVA_FACET;
 import static org.eclipse.libra.facet.OSGiBundleFacetUtils.JPA_FACET;
 import static org.eclipse.libra.facet.OSGiBundleFacetUtils.META_INF;
 import static org.eclipse.libra.facet.OSGiBundleFacetUtils.META_PERSISTENCE_HEADER;
@@ -52,6 +53,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jst.common.project.facet.core.internal.JavaFacetUtil;
 import org.eclipse.libra.facet.internal.LibraFacetPlugin;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.project.IBundleClasspathEntry;
@@ -132,6 +134,9 @@ public class OSGiBundleFacetInstallDelegate implements IDelegate {
 		bundleProjectDescription.setPackageImports(getPackageImports(bundleProjectDescription));
 		bundleProjectDescription.setBinIncludes(getBinIncludes(bundleProjectDescription));
 		bundleProjectDescription.setBundleClasspath(getBundleClasspath(bundleProjectDescription));
+		IProjectFacetVersion javaProjectFacetVersion = FacetedProjectUtilities.getProjectFacetVersion(project, JAVA_FACET);
+		String executionEnvironment = JavaFacetUtil.getCorrespondingExecutionEnvironment(javaProjectFacetVersion);
+		bundleProjectDescription.setExecutionEnvironments(new String[]{executionEnvironment});
 		
 		bundleProjectDescription.apply(monitor);
 	}

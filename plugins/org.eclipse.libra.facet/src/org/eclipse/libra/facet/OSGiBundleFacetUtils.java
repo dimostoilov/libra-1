@@ -33,6 +33,7 @@ public class OSGiBundleFacetUtils {
 	public static final IProjectFacet OSGI_BUNDLE_FACET = ProjectFacetsManager.getProjectFacet(OSGI_BUNDLE);
 	public static final IProjectFacetVersion OSGI_BUNDLE_FACET_42 = OSGI_BUNDLE_FACET.getVersion("4.2"); //$NON-NLS-1$
 	
+	public static final String JAVA_FACET = "jst.java"; //$NON-NLS-1$
 	public static final String WEB_FACET = "jst.web"; //$NON-NLS-1$
 	public static final String JPA_FACET = "jpt.jpa"; //$NON-NLS-1$
 	
