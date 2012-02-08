@@ -135,8 +135,10 @@ public class OSGiBundleFacetInstallDelegate implements IDelegate {
 		bundleProjectDescription.setBinIncludes(getBinIncludes(bundleProjectDescription));
 		bundleProjectDescription.setBundleClasspath(getBundleClasspath(bundleProjectDescription));
 		IProjectFacetVersion javaProjectFacetVersion = FacetedProjectUtilities.getProjectFacetVersion(project, JAVA_FACET);
-		String executionEnvironment = JavaFacetUtil.getCorrespondingExecutionEnvironment(javaProjectFacetVersion);
-		bundleProjectDescription.setExecutionEnvironments(new String[]{executionEnvironment});
+		if (javaProjectFacetVersion != null) {
+			String executionEnvironment = JavaFacetUtil.getCorrespondingExecutionEnvironment(javaProjectFacetVersion);
+			bundleProjectDescription.setExecutionEnvironments(new String[]{executionEnvironment});
+		}
 		
 		bundleProjectDescription.apply(monitor);
 	}
