@@ -34,6 +34,7 @@ import static org.eclipse.libra.facet.OSGiBundleFacetUtils.isJpaProject;
 import static org.eclipse.libra.facet.OSGiBundleFacetUtils.isWebProject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,15 +135,11 @@ public class OSGiBundleFacetInstallDelegate implements IDelegate {
 		bundleProjectDescription.setPackageImports(getPackageImports(bundleProjectDescription));
 		bundleProjectDescription.setBinIncludes(getBinIncludes(bundleProjectDescription));
 		bundleProjectDescription.setBundleClasspath(getBundleClasspath(bundleProjectDescription));
-		IProjectFacetVersion javaProjectFacetVersion = FacetedProjectUtilities.getProjectFacetVersion(project, JAVA_FACET);
-		if (javaProjectFacetVersion != null) {
-			String executionEnvironment = JavaFacetUtil.getCorrespondingExecutionEnvironment(javaProjectFacetVersion);
-			bundleProjectDescription.setExecutionEnvironments(new String[]{executionEnvironment});
-		}
+		setExecutionEnvironments(bundleProjectDescription);
 		
 		bundleProjectDescription.apply(monitor);
 	}
-
+	
 	private String[] getNatureIds(IBundleProjectDescription bundleProjectDescription) throws CoreException {
 		String[] natureIds = bundleProjectDescription.getNatureIds();
 		String[] newNatureIds = new String[natureIds.length + 1];
@@ -345,6 +342,25 @@ public class OSGiBundleFacetInstallDelegate implements IDelegate {
 	
 	private IPath getRelativePath(IProject project, IPath path) {
 		return path.makeRelativeTo(project.getFullPath()).addTrailingSeparator();
+	}
+	
+	private void setExecutionEnvironments(IBundleProjectDescription bundleProjectDescription) {
+		IProject project = bundleProjectDescription.getProject();
+		IProjectFacetVersion javaProjectFacetVersion = FacetedProjectUtilities.getProjectFacetVersion(project, JAVA_FACET);
+		if (javaProjectFacetVersion != null) {
+			String[] existingEEs = bundleProjectDescription.getExecutionEnvironments();
+			String newEE = JavaFacetUtil.getCorrespondingExecutionEnvironment(javaProjectFacetVersion);
+			//if there are existing EEs different from newEE add newEE. Else just set newEE.   
+			if (existingEEs != null) {
+				ArrayList<String> eeList = new ArrayList<String>(Arrays.asList(existingEEs));
+				if (!eeList.contains(newEE)) {
+					eeList.add(newEE);
+					bundleProjectDescription.setExecutionEnvironments(eeList.toArray(new String[eeList.size()]));
+				}
+			} else {
+				bundleProjectDescription.setExecutionEnvironments(new String[] { newEE } );
+			}
+		}
 	}
 	
 	private void moveMetaInfToRoot(IProject project, IProgressMonitor monitor) throws CoreException {
